@@ -1,0 +1,11 @@
+# Render Blueprint — one-click deploy
+# Dashboard -> New -> Blueprint -> connect repo. That's it.
+services:
+  - type: web
+    name: nexa-ai
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: node server.mjs
+    healthCheckPath: /api/health
+    autoDeploy: true
