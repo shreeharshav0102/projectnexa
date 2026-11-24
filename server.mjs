@@ -14,11 +14,19 @@ const DIST = path.join(root, 'dist');
 const PORT = process.env.PORT || 3001;
 const COOKIE = 'nexa_session';
 const MIME = { '.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.ico':'image/x-icon','.woff':'font/woff','.woff2':'font/woff2','.txt':'text/plain; charset=utf-8' };
-let mongo;
+let mongoPromise;
 async function db() {
   if (!process.env.MONGODB_URI) throw new Error('Set MONGODB_URI in your .env file');
-  if (!mongo) { mongo = new MongoClient(process.env.MONGODB_URI); await mongo.connect(); }
-  return mongo.db(process.env.MONGODB_DB || 'nexa_ai');
+  if (!mongoPromise) {
+    const client = new MongoClient(process.env.MONGODB_URI);
+    mongoPromise = client.connect().then(() => client).catch(async (error) => {
+      mongoPromise = undefined;
+      await client.close().catch(() => {});
+      throw error;
+    });
+  }
+  const client = await mongoPromise;
+  return client.db(process.env.MONGODB_DB || 'nexa_ai');
 }
 const json = (res, status, data, headers={}) => { res.writeHead(status, {'Content-Type':'application/json; charset=utf-8', ...headers}); res.end(JSON.stringify(data)); };
 function readBody(req) { return new Promise((resolve,reject)=>{let s='';req.on('data',c=>{s+=c;if(s.length>2_000_000){reject(new Error('Request too large'));req.destroy();}});req.on('end',()=>{try{resolve(JSON.parse(s||'{}'));}catch{reject(new Error('Invalid JSON'));}});req.on('error',reject);}); }
