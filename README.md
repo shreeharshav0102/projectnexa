@@ -13,7 +13,7 @@ dependency-free AI engine shared by both (`engine/aiEngine.mjs`).
 
 ## Run locally in VS Code
 
-Account sign-in, email verification and cloud chat history need a MongoDB database and Gmail SMTP credentials. Copy `.env.example` to `.env` and fill in `MONGODB_URI`, `MONGODB_DB`, `GMAIL_USER`, `GMAIL_APP_PASSWORD`, and a long random `SESSION_SECRET`. Keep `.env` private. Gmail requires 2-Step Verification and an App Password.
+Account sign-in, email verification and cloud chat history need a MongoDB database and Gmail SMTP credentials. Copy `.env.example` to `.env` and fill in `MONGODB_URI`, `MONGODB_DB`, `GMAIL_USER`, `GMAIL_APP_PASSWORD`, and a long random `SESSION_SECRET`. Keep `.env` private. Gmail requires 2-Step Verification and an App Password. Gmail SMTP works when running locally; Render Free blocks outgoing SMTP connections.
 
 ```bash
 npm install
